@@ -1,0 +1,13 @@
+{
+	"PackageName": "PivotWalkSpeed",
+	"Author": "Andy_Wirus",
+	"Dependencies": ["SignalSpoofer"],
+	"Commands": {
+		"walkspeed": ["Start flying", "ws", "speed"],
+		"unwalkspeed": ["Stop flying", "unws", "unspeed"],
+		"togglewalkspeed": ["Toggle walkspeed", "togglews"]
+	},
+	"Keybinds": {
+		"togglewalkspeed": ["Toggle Fly", "F3"]
+	}
+}
