@@ -1,0 +1,11 @@
+{
+	"PackageName": "TeleportCommands",
+	"Author": "Andy_Wirus",
+	"Dependencies": ["SignalSpoofer", "PivotFly?"],
+	"Commands": {
+		"goto": ["Teleport to player", "tp"]
+	},
+	"Keybinds": {
+		"clicktp": ["Click Teleport", 113]
+	}
+}
