@@ -1,0 +1,14 @@
+{
+	"PackageName": "PivotFly",
+	"Author": "Andy_Wirus",
+	"Dependencies": ["SignalSpoofer"],
+	"Commands": {
+		"fly": ["Start flying"],
+		"unfly": ["Stop flying"],
+		"togglefly": ["Toggle flight"],
+		"flyspeed": ["Change fly speed (sps)"]
+	},
+	"Keybinds": {
+		"togglefly": ["Toggle Fly", "F4"]
+	}
+}
