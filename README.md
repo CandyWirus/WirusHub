@@ -1,2 +1,2 @@
 # WirusHub
-still better than infinite yield
+Loader and default packages for Wirus Hub
