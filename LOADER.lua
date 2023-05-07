@@ -329,6 +329,17 @@ if #listfiles(PACKAGESPATH) == 0 then
 	end
 end
 
+local Global_PlaceId = game.PlaceId
+if Global_PlaceId == 0 then
+    game:GetPropertyChangedSignal("PlaceId"):Wait()
+    Global_PlaceId = game.PlaceId
+end
+local Global_GameId = game.GameId
+if Global_GameId == 0 then
+    game:GetPropertyChangedSignal("GameId"):Wait()
+    Global_GameId = game.GameId
+end
+
 --PARSE AND SANITIZE FILESYSTEM
 local usedPaths = {}
 while true do
@@ -379,22 +390,6 @@ while true do
 								warn(`Invalid package at {packagePath}: invalid dependency list.`)
 								continue
 							end
-							if checkVal(gamesWhitelist, "table", "nil") then
-								warn(`Invalid package at {packagePath}: invalid game whitelist.`)
-								continue
-							end
-							if checkVal(gamesBlacklist, "table", "nil") then
-								warn(`Invalid package at {packagePath}: invalid game blacklist.`)
-								continue
-							end
-							if checkVal(placesWhitelist, "table", "nil") then
-								warn(`Invalid package at {packagePath}: invalid place whitelist.`)
-								continue
-							end
-							if checkVal(placesBlacklist, "table", "nil") then
-								warn(`Invalid package at {packagePath}: invalid place blacklist.`)
-								continue
-							end
 							if checkVal(commandList, "table", "nil") then
 								warn(`Invalid package at {packagePath}: invalid command list.`)
 								continue
@@ -405,6 +400,68 @@ while true do
 							end
 							if checkVal(packageVersion, "string", "nil") then
 								warn(`Invalid package at {packagePath}: invalid version.`)
+								continue
+							end
+
+							if typeof(gamesWhitelist) == "table" then
+								local invalid = true
+								for i = 1, #gamesWhitelist do
+									if gamesWhitelist[i] == Global_GameId then
+										invalid = false
+										break
+									end
+								end
+								if invalid then
+									continue
+								end
+							elseif gamesWhitelist ~= nil then
+								warn(`Invalid package at {packagePath}: invalid game whitelist.`)
+								continue
+							end
+
+							if typeof(gamesBlacklist) == "table" then
+								local invalid = false
+								for i = 1, #gamesBlacklist do
+									if gamesBlacklist[i] == Global_PlaceId then
+										invalid = true
+									end
+								end
+								if invalid then
+									continue
+								end
+							elseif gamesBlacklist ~= nil then
+								warn(`Invalid package at {packagePath}: invalid game blacklist.`)
+								continue
+							end
+
+							if typeof(placesWhitelist) == "table" then
+								local invalid = true
+								for i = 1, #placesWhitelist do
+									if placesWhitelist[i] == Global_PlaceId then
+										invalid = false
+										break
+									end
+								end
+								if invalid then
+									continue
+								end
+							elseif placesWhitelist ~= nil then
+								warn(`Invalid package at {packagePath}: invalid place whitelist.`)
+								continue
+							end
+
+							if typeof(placesBlacklist) == "table" then
+								local invalid = false
+								for i = 1, #placesBlacklist do
+									if placesBlacklist[i] == Global_PlaceId then
+										invalid = true
+									end
+								end
+								if invalid then
+									continue
+								end
+							elseif placesBlacklist ~= nil then
+								warn(`Invalid package at {packagePath}: invalid place blacklist.`)
 								continue
 							end
 
@@ -543,9 +600,14 @@ while true do
 				local packageFunction = package.Index
 				local loaded, returned = pcall(packageFunction, package)
 				if loaded then
-					package.Loaded = true
-					module[packageName] = returned
-					loadedCount += 1
+					if returned then
+						package.Loaded = true
+						module[packageName] = returned
+						loadedCount += 1
+					else
+						packages[packageName] = nil
+						packageCount -= 1
+					end
 				else
 					warn(`{packageName} cannot continue. Error: {returned}`)
 					packages[packageName] = nil
